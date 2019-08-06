@@ -9,7 +9,7 @@ def chunks(l, n):
     for i in range(0, len(l), n):
         yield l[i:i + n]
 
-def mcvis(x):
+def mcvisPy(x):
     n = x.shape[0]
     p = x.shape[1]
     
@@ -98,4 +98,4 @@ x = np.random.normal(0, 1, n*p).reshape(n, p)
 x[:, 0] = x[:, 1] + np.random.normal(0, 0.5, n)
 
 
-res = mcvis(x)
+res = mcvisPy(x)
