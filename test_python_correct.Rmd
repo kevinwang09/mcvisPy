@@ -47,3 +47,16 @@ ggplot_mcvis(cheat_result)
 ```
 
 
+```{r}
+library(rbenchmark)
+benchmark("r" = {mcvis::mcvis(X = X)},
+          "python" ={mcvisPy(x = X)},
+          replications = 20)
+```
+
+
+# Session Info
+```{r}
+sessionInfo()
+```
+
