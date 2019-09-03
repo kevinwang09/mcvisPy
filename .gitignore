@@ -105,3 +105,4 @@ venv.bak/
 .Rproj.user
 .Rhistory
 .idea
+.DS_Store
