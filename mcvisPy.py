@@ -41,7 +41,7 @@ def one_mcvis_none(x_sample):
     return (result)
 
 
-def mcvisPy(x, standardise_method="euclidean"):
+def mcvispy(x, standardise_method="euclidean"):
     n = x.shape[0]
     p = x.shape[1]
 
@@ -61,7 +61,7 @@ def mcvisPy(x, standardise_method="euclidean"):
 
         if standardise_method == "euclidean":
             out = one_mcvis_euclidean(x_sample)
-        else standardise_method == "none":
+        else:
             out = one_mcvis_none(x_sample)
 
         v2_mat[:, i] = out["v2"]  # v2 in R
@@ -94,3 +94,4 @@ def mcvisPy(x, standardise_method="euclidean"):
     result["t_square"] = tor
 
     return result
+

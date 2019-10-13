@@ -33,7 +33,7 @@ reticulate::source_python("mcvisPy.py")
 ```
 
 ```{r}
-py_result = mcvisPy(x = X)
+py_result = mcvispy(x = X)
 class(py_result$mc_pd)
 py_MC = py_result$mc_pd %>% reticulate::py_to_r()
 dimnames(py_MC) = dimnames(r_result$MC)
@@ -50,13 +50,13 @@ ggplot_mcvis(cheat_result)
 ```{r}
 library(rbenchmark)
 benchmark("r" = {mcvis::mcvis(X = X)},
-          "python" ={mcvisPy(x = X)},
+          "python" ={mcvispy(x = X)},
           replications = 20)
 ```
 
 
 # Session Info
 ```{r}
-sessionInfo()
+sessioninfo::session_info()
 ```
 
