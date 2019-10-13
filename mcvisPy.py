@@ -9,7 +9,39 @@ def chunks(l, n):
         yield l[i:i + n]
 
 
-def mcvisPy(x):
+def one_mcvis_euclidean(x_sample):
+    x_sample_mean = x_sample.mean(axis=0, keepdims=True)
+    x_sample_centred = x_sample - x_sample_mean  # X2 in R
+    s = np.sqrt(np.sum(x_sample_centred ** 2, axis=0))  # s in R
+    Z = x_sample_centred / s  # Z in R
+    x_norm = np.sqrt(np.sum(x_sample ** 2, axis=0))  # x_norm in R
+    v = x_norm / s  # v in R
+    D = np.diag(v)  # D in R
+    Z1 = np.matmul(Z, D)  # Z1 in R
+    crossprodZ1 = np.matmul(np.transpose(Z1), Z1)
+    eigens = np.linalg.svd(crossprodZ1, compute_uv=False)  # Not in R
+    v2 = 1 / eigens  # Not in R
+    vif = np.diag(np.linalg.inv(crossprodZ1))  # Not in R
+    result = dict();
+    result["v2"] = v2
+    result["vif"] = vif
+
+    return (result)
+
+
+def one_mcvis_none(x_sample):
+    crossprodX1 = np.matmul(np.transpose(x_sample), x_sample)
+    eigens = np.linalg.svd(crossprodX1, compute_uv=False)  # Not in R
+    v2 = 1 / eigens  # Not in R
+    vif = np.diag(np.linalg.inv(crossprodX1))  # Not in R
+    result = dict();
+    result["v2"] = v2
+    result["vif"] = vif
+
+    return (result)
+
+
+def mcvisPy(x, standardise_method="euclidean"):
     n = x.shape[0]
     p = x.shape[1]
 
@@ -26,21 +58,14 @@ def mcvisPy(x):
     for i in range(nexp):
         index = np.random.choice(range(n), n)
         x_sample = x[index, :]  # X1 in R
-        x_sample_mean = x_sample.mean(axis=0, keepdims=True)
-        x_sample_centred = x_sample - x_sample_mean  # X2 in R
-        s = np.sqrt(np.sum(x_sample_centred ** 2, axis=0))  # s in R
-        Z = x_sample_centred / s  # Z in R
-        x_norm = np.sqrt(np.sum(x_sample ** 2, axis=0))  # x_norm in R
-        v = x_norm / s  # v in R
-        D = np.diag(v)  # D in R
-        Z1 = np.matmul(Z, D)  # Z1 in R
-        crossprodZ1 = np.matmul(np.transpose(Z1), Z1)
-        eigens = np.linalg.svd(crossprodZ1, compute_uv=False) # Not in R
-        v2 = 1 / eigens  # Not in R
-        vif = np.diag(np.linalg.inv(crossprodZ1))  # Not in R
 
-        v2_mat[:, i] = v2  # v2 in R
-        vif_mat[:, i] = vif  # vif in R
+        if standardise_method == "euclidean":
+            out = one_mcvis_euclidean(x_sample)
+        else standardise_method == "none":
+            out = one_mcvis_none(x_sample)
+
+        v2_mat[:, i] = out["v2"]  # v2 in R
+        vif_mat[:, i] = out["vif"]  # vif in R
 
     index_list = list(chunks(range(1000), 100))  # indexList in R
     tstat_mat = np.ones((p, 10))
@@ -64,7 +89,7 @@ def mcvisPy(x):
                          columns=mc_rownames,
                          index=mc_rownames[::-1])
 
-    result = dict();
+    result = dict()
     result["mc_pd"] = mc_pd
     result["t_square"] = tor
 
